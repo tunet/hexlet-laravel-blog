@@ -11,6 +11,7 @@
 </head>
 <body>
     <div class="container mt-4">
+        <h1>@yield('header')</h1>
         <div>
             @yield('content')
         </div>
