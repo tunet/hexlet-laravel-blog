@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Throwable;
 
 class ArticleController extends Controller
 {
@@ -36,6 +37,33 @@ class ArticleController extends Controller
         ]);
 
         $article = new Article();
+        $article->fill($data);
+        $article->save();
+
+        return redirect()->route('articles.index');
+    }
+
+    public function edit($id)
+    {
+        try {
+            $article = Article::findOrFail($id);
+
+        } catch (Throwable $error) {
+            echo $error->getMessage();
+            die;
+        }
+
+        return view('article.edit', compact('article'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $article = Article::findOrFail($id);
+        $data = $this->validate($request, [
+            'name' => "required|unique:articles,name,{$article->id}",
+            'body' => 'required|min:100',
+        ]);
+
         $article->fill($data);
         $article->save();
 
