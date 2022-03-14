@@ -10,6 +10,9 @@
             [<a href="{{ route('articles.edit', $article) }}">
                 Редактировать
             </a>]
+            [<a href="{{ route('articles.destroy', $article) }}" data-method="delete" rel="nofollow">
+                Удалить
+            </a>]
         </h2>
         <div>
             {{ Str::limit($article->body, 200) }}
