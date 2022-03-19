@@ -3,33 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Throwable;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $articles = Article::paginate();
 
         return view('article.index', compact('articles'));
     }
 
-    public function show($id)
-    {
-        $article = Article::findOrFail($id);
-
-        return view('article.show', compact('article'));
-    }
-
-    public function create()
+    public function create(): View
     {
         $article = new Article();
 
         return view('article.create', compact('article'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $this->validate($request, [
             'name' => 'required|unique:articles',
@@ -43,22 +37,18 @@ class ArticleController extends Controller
         return redirect()->route('articles.index');
     }
 
-    public function edit($id)
+    public function show(Article $article): View
     {
-        try {
-            $article = Article::findOrFail($id);
+        return view('article.show', compact('article'));
+    }
 
-        } catch (Throwable $error) {
-            echo $error->getMessage();
-            die;
-        }
-
+    public function edit(Article $article): View
+    {
         return view('article.edit', compact('article'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Article $article): RedirectResponse
     {
-        $article = Article::findOrFail($id);
         $data = $this->validate($request, [
             'name' => "required|unique:articles,name,{$article->id}",
             'body' => 'required|min:100',
@@ -70,13 +60,9 @@ class ArticleController extends Controller
         return redirect()->route('articles.index');
     }
 
-    public function destroy($id)
+    public function destroy(Article $article): RedirectResponse
     {
-        $article = Article::find($id);
-
-        if ($article) {
-            $article->delete();
-        }
+        $article->delete();
 
         return redirect()->route('articles.index');
     }
